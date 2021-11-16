@@ -1213,6 +1213,7 @@ void readQueryFromClient(aeEventLoop *el, int fd, void *privdata, int mask) {
         freeClient(c);
         return;
     }
+    printf(" [%s:%d] socket %d receive %d Bytes, %*.s\n", __func__, __LINE__, fd, nread, nread, c->querybuf);
     processInputBuffer(c);
     server.current_client = NULL;
 }

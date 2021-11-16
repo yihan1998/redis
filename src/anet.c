@@ -447,6 +447,7 @@ static int anetListen(char *err, int s, struct sockaddr *sa, socklen_t len, int 
         close(s);
         return ANET_ERR;
     }
+    printf(" [%s:%d] socket %d bind & listen port %d\n", __func__, __LINE__, s, ((struct sockaddr_in *)sa)->sin_port);
     return ANET_OK;
 }
 
@@ -537,6 +538,7 @@ static int anetGenericAccept(char *err, int s, struct sockaddr *sa, socklen_t *l
                 return ANET_ERR;
             }
         }
+        printf(" [%s:%d] socket %d accept connection via %d\n", __func__, __LINE__, s, fd);
         break;
     }
     return fd;
