@@ -924,7 +924,9 @@ int processInlineBuffer(redisClient *c) {
     printf(" [%s:%d]\n", __func__, __LINE__);
     /* Split the input buffer up to the \r\n */
     querylen = newline-(c->querybuf);
+    printf(" [%s:%d]\n", __func__, __LINE__);
     aux = sdsnewlen(c->querybuf,querylen);
+    printf(" [%s:%d]\n", __func__, __LINE__);
     argv = sdssplitargs(aux,&argc);
     printf(" [%s:%d] argv: %p\n", __func__, __LINE__, argv);
     sdsfree(aux);
