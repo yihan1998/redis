@@ -352,6 +352,7 @@ void addReply(redisClient *c, robj *obj) {
     } else {
         redisPanic("Wrong obj->encoding in addReply()");
     }
+    printf(" [%s:%d] reply: %s\n", __func__, __LINE__, c->buf);
 }
 
 void addReplySds(redisClient *c, sds s) {
