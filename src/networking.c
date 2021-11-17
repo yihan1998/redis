@@ -921,6 +921,7 @@ int processInlineBuffer(redisClient *c) {
     if (newline && newline != c->querybuf && *(newline-1) == '\r')
         newline--;
 
+    printf(" [%s:%d]\n", __func__, __LINE__);
     /* Split the input buffer up to the \r\n */
     querylen = newline-(c->querybuf);
     aux = sdsnewlen(c->querybuf,querylen);
@@ -932,6 +933,7 @@ int processInlineBuffer(redisClient *c) {
         return REDIS_ERR;
     }
 
+    printf(" [%s:%d]\n", __func__, __LINE__);
     /* Newline from slaves can be used to refresh the last ACK time.
      * This is useful for a slave to ping back while loading a big
      * RDB file. */
@@ -941,12 +943,14 @@ int processInlineBuffer(redisClient *c) {
     /* Leave data after the first line of the query in the buffer */
     sdsrange(c->querybuf,querylen+2,-1);
 
+    printf(" [%s:%d]\n", __func__, __LINE__);
     /* Setup argv array on client structure */
     if (argc) {
         if (c->argv) zfree(c->argv);
         c->argv = zmalloc(sizeof(robj*)*argc);
     }
 
+    printf(" [%s:%d]\n", __func__, __LINE__);
     /* Create redis objects for all arguments. */
     for (c->argc = 0, j = 0; j < argc; j++) {
         if (sdslen(argv[j])) {
@@ -1143,6 +1147,7 @@ void processInputBuffer(redisClient *c) {
             redisPanic("Unknown request type");
         }
 
+        printf(" [%s:%d]\n", __func__, __LINE__);
         /* Multibulk processing could see a <= 0 length. */
         if (c->argc == 0) {
             resetClient(c);
