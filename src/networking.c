@@ -1152,6 +1152,7 @@ void processInputBuffer(redisClient *c) {
             if (server.current_client == NULL) break;
         }
     }
+    printf(" [%s:%d] reply: %s", __func__, __LINE__, c->buf);
 }
 
 void readQueryFromClient(aeEventLoop *el, int fd, void *privdata, int mask) {
@@ -1195,7 +1196,7 @@ void readQueryFromClient(aeEventLoop *el, int fd, void *privdata, int mask) {
         return;
     }
     if (nread) {
-        printf(" [%s:%d] receive %d bytes, %*.s\n", __func__, __LINE__, nread, nread, c->querybuf + qblen);
+        printf(" [%s:%d] receive %d bytes, %s\n", __func__, __LINE__, c->querybuf + qblen);
         sdsIncrLen(c->querybuf,nread);
         c->lastinteraction = server.unixtime;
         if (c->flags & REDIS_MASTER) c->reploff += nread;
