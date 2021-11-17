@@ -896,7 +896,6 @@ sds *sdssplitargs(const char *line, int *argc) {
                         inq=1;
                         break;
                     case '\'':
-                        printf(" [%s:%d] in single quotes\n", __func__, __LINE__);
                         insq=1;
                         break;
                     default:

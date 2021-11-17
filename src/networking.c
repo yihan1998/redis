@@ -352,7 +352,6 @@ void addReply(redisClient *c, robj *obj) {
     } else {
         redisPanic("Wrong obj->encoding in addReply()");
     }
-    printf(" [%s:%d] reply: %s\n", __func__, __LINE__, c->buf);
 }
 
 void addReplySds(redisClient *c, sds s) {
@@ -907,7 +906,6 @@ int processInlineBuffer(redisClient *c) {
     /* Search for end of line */
     newline = strchr(c->querybuf,'\n');
 
-    printf(" [%s:%d] newline: %p\n", __func__, __LINE__, newline);
     /* Nothing to do without a \r\n */
     if (newline == NULL) {
         if (sdslen(c->querybuf) > REDIS_INLINE_MAX_SIZE) {
@@ -921,14 +919,10 @@ int processInlineBuffer(redisClient *c) {
     if (newline && newline != c->querybuf && *(newline-1) == '\r')
         newline--;
 
-    printf(" [%s:%d]\n", __func__, __LINE__);
     /* Split the input buffer up to the \r\n */
     querylen = newline-(c->querybuf);
-    printf(" [%s:%d]\n", __func__, __LINE__);
     aux = sdsnewlen(c->querybuf,querylen);
-    printf(" [%s:%d]\n", __func__, __LINE__);
     argv = sdssplitargs(aux,&argc);
-    printf(" [%s:%d] argv: %p\n", __func__, __LINE__, argv);
     sdsfree(aux);
     if (argv == NULL) {
         addReplyError(c,"Protocol error: unbalanced quotes in request");
@@ -936,7 +930,6 @@ int processInlineBuffer(redisClient *c) {
         return REDIS_ERR;
     }
 
-    printf(" [%s:%d]\n", __func__, __LINE__);
     /* Newline from slaves can be used to refresh the last ACK time.
      * This is useful for a slave to ping back while loading a big
      * RDB file. */
@@ -946,14 +939,12 @@ int processInlineBuffer(redisClient *c) {
     /* Leave data after the first line of the query in the buffer */
     sdsrange(c->querybuf,querylen+2,-1);
 
-    printf(" [%s:%d]\n", __func__, __LINE__);
     /* Setup argv array on client structure */
     if (argc) {
         if (c->argv) zfree(c->argv);
         c->argv = zmalloc(sizeof(robj*)*argc);
     }
 
-    printf(" [%s:%d]\n", __func__, __LINE__);
     /* Create redis objects for all arguments. */
     for (c->argc = 0, j = 0; j < argc; j++) {
         if (sdslen(argv[j])) {
@@ -1142,7 +1133,6 @@ void processInputBuffer(redisClient *c) {
         }
 
         if (c->reqtype == REDIS_REQ_INLINE) {
-            printf(" [%s:%d]\n", __func__, __LINE__);
             if (processInlineBuffer(c) != REDIS_OK) break;
         } else if (c->reqtype == REDIS_REQ_MULTIBULK) {
             if (processMultibulkBuffer(c) != REDIS_OK) break;
@@ -1150,13 +1140,11 @@ void processInputBuffer(redisClient *c) {
             redisPanic("Unknown request type");
         }
 
-        printf(" [%s:%d]\n", __func__, __LINE__);
         /* Multibulk processing could see a <= 0 length. */
         if (c->argc == 0) {
             resetClient(c);
         } else {
             /* Only reset the client when the command was executed. */
-            printf(" [%s:%d]\n", __func__, __LINE__);
             if (processCommand(c) == REDIS_OK)
                 resetClient(c);
             /* freeMemoryIfNeeded may flush slave output buffers. This may result
@@ -1207,7 +1195,6 @@ void readQueryFromClient(aeEventLoop *el, int fd, void *privdata, int mask) {
         return;
     }
     if (nread) {
-        printf(" [%s:%d] socket %d receive %d Bytes, %s\n", __func__, __LINE__, fd, nread, c->querybuf+qblen);
         sdsIncrLen(c->querybuf,nread);
         c->lastinteraction = server.unixtime;
         if (c->flags & REDIS_MASTER) c->reploff += nread;

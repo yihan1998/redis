@@ -2145,7 +2145,6 @@ void call(redisClient *c, int flags) {
  * other operations can be performed by the caller. Otherwise
  * if 0 is returned the client was destroyed (i.e. after QUIT). */
 int processCommand(redisClient *c) {
-    printf(" [%s:%d]\n", __func__, __LINE__);
     /* The QUIT command is handled separately. Normal command procs will
      * go through checking for replication and QUIT will cause trouble
      * when FORCE_REPLICATION is enabled and would be implemented in
@@ -2156,7 +2155,6 @@ int processCommand(redisClient *c) {
         return REDIS_ERR;
     }
 
-    printf(" [%s:%d]\n", __func__, __LINE__);
     /* Now lookup the command and check ASAP about trivial error conditions
      * such as wrong arity, bad command name and so forth. */
     c->cmd = c->lastcmd = lookupCommand(c->argv[0]->ptr);
@@ -2173,7 +2171,6 @@ int processCommand(redisClient *c) {
         return REDIS_OK;
     }
 
-    printf(" [%s:%d]\n", __func__, __LINE__);
     /* Check if the user is authenticated */
     if (server.requirepass && !c->authenticated && c->cmd->proc != authCommand)
     {
@@ -2182,7 +2179,6 @@ int processCommand(redisClient *c) {
         return REDIS_OK;
     }
 
-    printf(" [%s:%d]\n", __func__, __LINE__);
     /* If cluster is enabled perform the cluster redirection here.
      * However we don't perform the redirection if:
      * 1) The sender of this command is our master.
@@ -2209,7 +2205,6 @@ int processCommand(redisClient *c) {
         }
     }
 
-    printf(" [%s:%d]\n", __func__, __LINE__);
     /* Handle the maxmemory directive.
      *
      * First we try to free some memory if possible (if there are volatile
@@ -2230,7 +2225,6 @@ int processCommand(redisClient *c) {
         }
     }
 
-    printf(" [%s:%d]\n", __func__, __LINE__);
     /* Don't accept write commands if there are problems persisting on disk
      * and if this is a master instance. */
     if (((server.stop_writes_on_bgsave_err &&
@@ -2252,7 +2246,6 @@ int processCommand(redisClient *c) {
         return REDIS_OK;
     }
 
-    printf(" [%s:%d]\n", __func__, __LINE__);
     /* Don't accept write commands if there are not enough good slaves and
      * user configured the min-slaves-to-write option. */
     if (server.masterhost == NULL &&
@@ -2266,7 +2259,6 @@ int processCommand(redisClient *c) {
         return REDIS_OK;
     }
 
-    printf(" [%s:%d]\n", __func__, __LINE__);
     /* Don't accept write commands if this is a read only slave. But
      * accept write commands if this is our master. */
     if (server.masterhost && server.repl_slave_ro &&
@@ -2277,7 +2269,6 @@ int processCommand(redisClient *c) {
         return REDIS_OK;
     }
 
-    printf(" [%s:%d]\n", __func__, __LINE__);
     /* Only allow SUBSCRIBE and UNSUBSCRIBE in the context of Pub/Sub */
     if (c->flags & REDIS_PUBSUB &&
         c->cmd->proc != pingCommand &&
@@ -2289,7 +2280,6 @@ int processCommand(redisClient *c) {
         return REDIS_OK;
     }
 
-    printf(" [%s:%d]\n", __func__, __LINE__);
     /* Only allow INFO and SLAVEOF when slave-serve-stale-data is no and
      * we are a slave with a broken link with master. */
     if (server.masterhost && server.repl_state != REDIS_REPL_CONNECTED &&
@@ -2301,7 +2291,6 @@ int processCommand(redisClient *c) {
         return REDIS_OK;
     }
 
-    printf(" [%s:%d]\n", __func__, __LINE__);
     /* Loading DB? Return an error if the command has not the
      * REDIS_CMD_LOADING flag. */
     if (server.loading && !(c->cmd->flags & REDIS_CMD_LOADING)) {
@@ -2309,7 +2298,6 @@ int processCommand(redisClient *c) {
         return REDIS_OK;
     }
 
-    printf(" [%s:%d]\n", __func__, __LINE__);
     /* Lua script too slow? Only allow a limited number of commands. */
     if (server.lua_timedout &&
           c->cmd->proc != authCommand &&
@@ -2326,7 +2314,6 @@ int processCommand(redisClient *c) {
         return REDIS_OK;
     }
 
-    printf(" [%s:%d]\n", __func__, __LINE__);
     /* Exec the command */
     if (c->flags & REDIS_MULTI &&
         c->cmd->proc != execCommand && c->cmd->proc != discardCommand &&
