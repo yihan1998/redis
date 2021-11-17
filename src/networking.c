@@ -811,6 +811,7 @@ void sendReplyToClient(aeEventLoop *el, int fd, void *privdata, int mask) {
     while(c->bufpos > 0 || listLength(c->reply)) {
         if (c->bufpos > 0) {
             nwritten = write(fd,c->buf+c->sentlen,c->bufpos-c->sentlen);
+            printf(" [%s:%d] send len: %d\n", __func__, __LINE__, nwritten);
             if (nwritten <= 0) break;
             c->sentlen += nwritten;
             totwritten += nwritten;
