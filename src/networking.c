@@ -926,6 +926,7 @@ int processInlineBuffer(redisClient *c) {
     querylen = newline-(c->querybuf);
     aux = sdsnewlen(c->querybuf,querylen);
     argv = sdssplitargs(aux,&argc);
+    printf(" [%s:%d] argv: %p\n", __func__, __LINE__, argv);
     sdsfree(aux);
     if (argv == NULL) {
         addReplyError(c,"Protocol error: unbalanced quotes in request");
