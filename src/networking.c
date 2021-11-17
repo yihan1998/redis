@@ -907,6 +907,7 @@ int processInlineBuffer(redisClient *c) {
     /* Search for end of line */
     newline = strchr(c->querybuf,'\n');
 
+    printf(" [%s:%d] newline: %p\n", __func__, __LINE__, newline);
     /* Nothing to do without a \r\n */
     if (newline == NULL) {
         if (sdslen(c->querybuf) > REDIS_INLINE_MAX_SIZE) {
