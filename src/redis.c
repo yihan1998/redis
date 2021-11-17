@@ -2225,6 +2225,7 @@ int processCommand(redisClient *c) {
         }
     }
 
+    printf(" [%s:%d]\n", __func__, __LINE__f);
     /* Don't accept write commands if there are problems persisting on disk
      * and if this is a master instance. */
     if (((server.stop_writes_on_bgsave_err &&
@@ -2246,6 +2247,7 @@ int processCommand(redisClient *c) {
         return REDIS_OK;
     }
 
+    printf(" [%s:%d]\n", __func__, __LINE__f);
     /* Don't accept write commands if there are not enough good slaves and
      * user configured the min-slaves-to-write option. */
     if (server.masterhost == NULL &&
@@ -2259,6 +2261,7 @@ int processCommand(redisClient *c) {
         return REDIS_OK;
     }
 
+    printf(" [%s:%d]\n", __func__, __LINE__f);
     /* Don't accept write commands if this is a read only slave. But
      * accept write commands if this is our master. */
     if (server.masterhost && server.repl_slave_ro &&
@@ -2269,6 +2272,7 @@ int processCommand(redisClient *c) {
         return REDIS_OK;
     }
 
+    printf(" [%s:%d]\n", __func__, __LINE__f);
     /* Only allow SUBSCRIBE and UNSUBSCRIBE in the context of Pub/Sub */
     if (c->flags & REDIS_PUBSUB &&
         c->cmd->proc != pingCommand &&
@@ -2280,6 +2284,7 @@ int processCommand(redisClient *c) {
         return REDIS_OK;
     }
 
+    printf(" [%s:%d]\n", __func__, __LINE__f);
     /* Only allow INFO and SLAVEOF when slave-serve-stale-data is no and
      * we are a slave with a broken link with master. */
     if (server.masterhost && server.repl_state != REDIS_REPL_CONNECTED &&
@@ -2291,6 +2296,7 @@ int processCommand(redisClient *c) {
         return REDIS_OK;
     }
 
+    printf(" [%s:%d]\n", __func__, __LINE__f);
     /* Loading DB? Return an error if the command has not the
      * REDIS_CMD_LOADING flag. */
     if (server.loading && !(c->cmd->flags & REDIS_CMD_LOADING)) {
@@ -2298,6 +2304,7 @@ int processCommand(redisClient *c) {
         return REDIS_OK;
     }
 
+    printf(" [%s:%d]\n", __func__, __LINE__f);
     /* Lua script too slow? Only allow a limited number of commands. */
     if (server.lua_timedout &&
           c->cmd->proc != authCommand &&
@@ -2314,6 +2321,7 @@ int processCommand(redisClient *c) {
         return REDIS_OK;
     }
 
+    printf(" [%s:%d]\n", __func__, __LINE__f);
     /* Exec the command */
     if (c->flags & REDIS_MULTI &&
         c->cmd->proc != execCommand && c->cmd->proc != discardCommand &&
