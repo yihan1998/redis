@@ -1134,6 +1134,7 @@ void processInputBuffer(redisClient *c) {
         }
 
         if (c->reqtype == REDIS_REQ_INLINE) {
+            printf(" [%s:%d]\n", __func__, __LINE__);
             if (processInlineBuffer(c) != REDIS_OK) break;
         } else if (c->reqtype == REDIS_REQ_MULTIBULK) {
             if (processMultibulkBuffer(c) != REDIS_OK) break;
@@ -1146,6 +1147,7 @@ void processInputBuffer(redisClient *c) {
             resetClient(c);
         } else {
             /* Only reset the client when the command was executed. */
+            printf(" [%s:%d]\n", __func__, __LINE__);
             if (processCommand(c) == REDIS_OK)
                 resetClient(c);
             /* freeMemoryIfNeeded may flush slave output buffers. This may result
