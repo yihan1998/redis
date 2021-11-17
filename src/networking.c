@@ -1196,7 +1196,7 @@ void readQueryFromClient(aeEventLoop *el, int fd, void *privdata, int mask) {
         return;
     }
     if (nread) {
-        printf(" [%s:%d] receive %d bytes, %s\n", __func__, __LINE__, c->querybuf + qblen);
+        printf(" [%s:%d] socket %d receive %d Bytes, %s\n", __func__, __LINE__, fd, nread, c->querybuf+qblen);
         sdsIncrLen(c->querybuf,nread);
         c->lastinteraction = server.unixtime;
         if (c->flags & REDIS_MASTER) c->reploff += nread;
