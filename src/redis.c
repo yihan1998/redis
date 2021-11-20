@@ -3594,6 +3594,13 @@ void redisSetProcTitle(char *title) {
 }
 
 int main(int argc, char **argv) {
+    int ret;
+    ret = mtcp_init("redis.conf");
+	if (ret) {
+		TRACE_CONFIG("Failed to initialize mtcp\n");
+		exit(EXIT_FAILURE);
+	}
+
     struct timeval tv;
 
     /* We need to initialize our libraries, and the server configuration. */
@@ -3710,6 +3717,9 @@ int main(int argc, char **argv) {
     aeSetBeforeSleepProc(server.el,beforeSleep);
     aeMain(server.el);
     aeDeleteEventLoop(server.el);
+
+	mtcp_destroy();
+
     return 0;
 }
 

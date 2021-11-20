@@ -68,7 +68,15 @@
 
 /* Test for polling API */
 #ifdef __linux__
-#define HAVE_EPOLL 1
+#define HAVE_MTCP   1
+#define HAVE_EPOLL  0
+#endif
+
+#ifdef HAVE_MTCP
+#include <mtcp_api.h>
+#include <mtcp_epoll.h>
+
+extern mctx_t mctx;
 #endif
 
 #if (defined(__APPLE__) && defined(MAC_OS_X_VERSION_10_6)) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined (__NetBSD__)
