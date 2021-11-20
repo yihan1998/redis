@@ -92,7 +92,7 @@ static int aeApiPoll(aeEventLoop *eventLoop, struct timeval *tvp) {
         numevents = retval;
         for (j = 0; j < numevents; j++) {
             int mask = 0;
-            struct epoll_event *e = state->events+j;
+            struct mtcp_epoll_event *e = state->events+j;
 
             if (e->events & MTCP_EPOLLIN) mask |= AE_READABLE;
             if (e->events & MTCP_EPOLLOUT) mask |= AE_WRITABLE;
