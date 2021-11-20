@@ -98,7 +98,7 @@ static int aeApiPoll(aeEventLoop *eventLoop, struct timeval *tvp) {
             if (e->events & MTCP_EPOLLOUT) mask |= AE_WRITABLE;
             if (e->events & MTCP_EPOLLERR) mask |= AE_WRITABLE;
             if (e->events & MTCP_EPOLLHUP) mask |= AE_WRITABLE;
-            eventLoop->fired[j].fd = e->data.fd;
+            eventLoop->fired[j].fd = e->data.sockid;
             eventLoop->fired[j].mask = mask;
         }
     }
