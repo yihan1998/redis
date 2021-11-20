@@ -31,7 +31,7 @@ static int aeApiCreate(aeEventLoop *eventLoop) {
 static int aeApiResize(aeEventLoop *eventLoop, int setsize) {
     aeApiState *state = eventLoop->apidata;
 
-    state->events = zrealloc(state->events, sizeof(struct epoll_event)*setsize);
+    state->events = zrealloc(state->events, sizeof(struct mtcp_epoll_event)*setsize);
     return 0;
 }
 
@@ -56,7 +56,7 @@ static int aeApiAddEvent(aeEventLoop *eventLoop, int fd, int mask) {
     if (mask & AE_READABLE) ee.events |= MTCP_EPOLLIN;
     if (mask & AE_WRITABLE) ee.events |= MTCP_EPOLLOUT;
     ee.data.u64 = 0; /* avoid valgrind warning */
-    ee.data.fd = fd;
+    ee.data.sockid = fd;
     if (mtcp_epoll_ctl(mctx, state->epfd,op,fd,&ee) == -1) return -1;
     return 0;
 }
@@ -70,7 +70,7 @@ static void aeApiDelEvent(aeEventLoop *eventLoop, int fd, int delmask) {
     if (mask & AE_READABLE) ee.events |= MTCP_EPOLLIN;
     if (mask & AE_WRITABLE) ee.events |= MTCP_EPOLLOUT;
     ee.data.u64 = 0; /* avoid valgrind warning */
-    ee.data.fd = fd;
+    ee.data.sockid = fd;
     if (mask != AE_NONE) {
         mtcp_epoll_ctl(mctx, state->epfd,MTCP_EPOLL_CTL_MOD,fd,&ee);
     } else {
