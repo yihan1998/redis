@@ -417,7 +417,7 @@ int anetWrite(int fd, char *buf, int count)
     return totlen;
 }
 
-static int anetListen(char *err, int s, struct sockaddr *sa, socklen_t len, int backlog) {
+static int anetListen(char *err, int port, int backlog) {
     // if (mtcp_bind(mctx,s,sa,len) == -1) {
     //     anetSetError(err, "bind: %s", strerror(errno));
     //     close(s);
@@ -432,8 +432,12 @@ static int anetListen(char *err, int s, struct sockaddr *sa, socklen_t len, int 
     // printf(" [%s:%d] socket %d bind & listen port %d\n", __func__, __LINE__, s, ((struct sockaddr_in *)sa)->sin_port);
     // return ANET_OK;
 
-    /* bind to port 80 */
-    if (mtcp_bind(mctx, s, sa, len) == -1) {
+    struct sockaddr saddr;
+    saddr.sin_family = AF_INET;
+	saddr.sin_addr.s_addr = INADDR_ANY;
+	saddr.sin_port = htons(port);
+
+    if (mtcp_bind(mctx, s, (struct sockaddr *)&saddr, sizeof(struct sockaddr_in)) == -1) {
         anetSetError(err, "bind: %s", strerror(errno));
         mtcp_close(s);
         return ANET_ERR;
@@ -480,7 +484,7 @@ static int _anetTcpServer(char *err, int port, char *bindaddr, int af, int backl
 
 //         if (af == AF_INET6 && anetV6Only(err,s) == ANET_ERR) goto error;
 //         // if (anetSetReuseAddr(err,s) == ANET_ERR) goto error;
-//         if (anetListen(err,s,p->ai_addr,p->ai_addrlen,backlog) == ANET_ERR) goto error;
+        // if (anetListen(err,s,p->ai_addr,p->ai_addrlen,backlog) == ANET_ERR) goto error;
 //         goto end;
 //     }
 //     if (p == NULL) {
@@ -508,10 +512,10 @@ static int _anetTcpServer(char *err, int port, char *bindaddr, int af, int backl
 		fprintf(stderr, "Failed to set socket in nonblocking mode.\n");
         goto end;
 	}
-	
-    if (anetListen(err,s,p->ai_addr,p->ai_addrlen,backlog) == ANET_ERR) goto error;
+
+    if (anetListen(err,s,port,backlog) == ANET_ERR) goto error;
     goto end;
-    
+
 error:
     s = ANET_ERR;
 end:
