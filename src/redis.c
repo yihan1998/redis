@@ -1865,7 +1865,7 @@ void initServer(void) {
     /* Create an event handler for accepting new connections in TCP and Unix
      * domain sockets. */
     for (j = 0; j < server.ipfd_count; j++) {
-        printf(" [%s:%d] add READ event to socket %d (epfd: %d)\n", __func__, __LINE__, server.ipfd[j], server.el);
+        printf(" [%s:%d] add READ event to socket %d\n", __func__, __LINE__, server.ipfd[j]);
         if (aeCreateFileEvent(server.el, server.ipfd[j], AE_READABLE,
             acceptTcpHandler,NULL) == AE_ERR)
             {
