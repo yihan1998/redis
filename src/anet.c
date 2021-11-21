@@ -546,6 +546,7 @@ static int anetGenericAccept(char *err, int s, struct sockaddr *sa, socklen_t *l
 }
 
 int anetTcpAccept(char *err, int s, char *ip, size_t ip_len, int *port) {
+    fprintf(stdout, " [%s:%d] accept new connection...\n", __func__, __LINE__);
     int fd;
     struct sockaddr_storage sa;
     socklen_t salen = sizeof(sa);
