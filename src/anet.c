@@ -418,17 +418,32 @@ int anetWrite(int fd, char *buf, int count)
 }
 
 static int anetListen(char *err, int s, struct sockaddr *sa, socklen_t len, int backlog) {
-    if (mtcp_bind(mctx,s,sa,len) == -1) {
+    // if (mtcp_bind(mctx,s,sa,len) == -1) {
+    //     anetSetError(err, "bind: %s", strerror(errno));
+    //     close(s);
+    //     return ANET_ERR;
+    // }
+
+    // if (mtcp_listen(mctx, s, backlog) == -1) {
+    //     anetSetError(err, "listen: %s", strerror(errno));
+    //     close(s);
+    //     return ANET_ERR;
+    // }
+    // printf(" [%s:%d] socket %d bind & listen port %d\n", __func__, __LINE__, s, ((struct sockaddr_in *)sa)->sin_port);
+    // return ANET_OK;
+
+    /* bind to port 80 */
+    if (mtcp_bind(mctx, s, sa, len) == -1) {
         anetSetError(err, "bind: %s", strerror(errno));
-        close(s);
+        mtcp_close(s);
         return ANET_ERR;
     }
 
-    if (mtcp_listen(mctx, s, backlog) == -1) {
-        anetSetError(err, "listen: %s", strerror(errno));
-        close(s);
+	if (mtcp_listen(mctx, s, backlog) == -1) {
+		anetSetError(err, "listen: %s", strerror(errno));
+        mtcp_close(s);
         return ANET_ERR;
-    }
+	}
     printf(" [%s:%d] socket %d bind & listen port %d\n", __func__, __LINE__, s, ((struct sockaddr_in *)sa)->sin_port);
     return ANET_OK;
 }
@@ -445,38 +460,61 @@ static int anetV6Only(char *err, int s) {
 
 static int _anetTcpServer(char *err, int port, char *bindaddr, int af, int backlog)
 {
+//     int s, rv;
+//     char _port[6];  /* strlen("65535") */
+//     struct addrinfo hints, *servinfo, *p;
+
+//     snprintf(_port,6,"%d",port);
+//     memset(&hints,0,sizeof(hints));
+//     hints.ai_family = af;
+//     hints.ai_socktype = SOCK_STREAM;
+//     hints.ai_flags = AI_PASSIVE;    /* No effect if bindaddr != NULL */
+
+//     if ((rv = getaddrinfo(bindaddr,_port,&hints,&servinfo)) != 0) {
+//         anetSetError(err, "%s", gai_strerror(rv));
+//         return ANET_ERR;
+//     }
+//     for (p = servinfo; p != NULL; p = p->ai_next) {
+//         if ((s = mtcp_socket(mctx, p->ai_family,p->ai_socktype,p->ai_protocol)) == -1)
+//             continue;
+
+//         if (af == AF_INET6 && anetV6Only(err,s) == ANET_ERR) goto error;
+//         // if (anetSetReuseAddr(err,s) == ANET_ERR) goto error;
+//         if (anetListen(err,s,p->ai_addr,p->ai_addrlen,backlog) == ANET_ERR) goto error;
+//         goto end;
+//     }
+//     if (p == NULL) {
+//         anetSetError(err, "unable to bind socket");
+//         goto error;
+//     }
+
+// error:
+//     s = ANET_ERR;
+// end:
+//     freeaddrinfo(servinfo);
+//     return s;
+
     int s, rv;
-    char _port[6];  /* strlen("65535") */
-    struct addrinfo hints, *servinfo, *p;
+	struct sockaddr_in saddr;
+	int ret;
 
-    snprintf(_port,6,"%d",port);
-    memset(&hints,0,sizeof(hints));
-    hints.ai_family = af;
-    hints.ai_socktype = SOCK_STREAM;
-    hints.ai_flags = AI_PASSIVE;    /* No effect if bindaddr != NULL */
-
-    if ((rv = getaddrinfo(bindaddr,_port,&hints,&servinfo)) != 0) {
-        anetSetError(err, "%s", gai_strerror(rv));
-        return ANET_ERR;
-    }
-    for (p = servinfo; p != NULL; p = p->ai_next) {
-        if ((s = mtcp_socket(mctx, p->ai_family,p->ai_socktype,p->ai_protocol)) == -1)
-            continue;
-
-        if (af == AF_INET6 && anetV6Only(err,s) == ANET_ERR) goto error;
-        // if (anetSetReuseAddr(err,s) == ANET_ERR) goto error;
-        if (anetListen(err,s,p->ai_addr,p->ai_addrlen,backlog) == ANET_ERR) goto error;
+	/* create socket and set it as nonblocking */
+	if ((s = mtcp_socket(mctx, AF_INET, SOCK_STREAM, 0)) == -1) {
+		fprintf(stderr, "Failed to create listening socket!\n");
         goto end;
-    }
-    if (p == NULL) {
-        anetSetError(err, "unable to bind socket");
-        goto error;
-    }
+	}
 
+	if (mtcp_setsock_nonblock(mctx, s) < 0) {
+		fprintf(stderr, "Failed to set socket in nonblocking mode.\n");
+        goto end;
+	}
+	
+    if (anetListen(err,s,p->ai_addr,p->ai_addrlen,backlog) == ANET_ERR) goto error;
+    goto end;
+    
 error:
     s = ANET_ERR;
 end:
-    freeaddrinfo(servinfo);
     return s;
 }
 
