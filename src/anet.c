@@ -439,13 +439,13 @@ static int anetListen(char *err, int s, int port, int backlog) {
 
     if (mtcp_bind(mctx, s, (struct sockaddr *)&saddr, sizeof(struct sockaddr_in)) == -1) {
         anetSetError(err, "bind: %s", strerror(errno));
-        mtcp_close(s);
+        mtcp_close(mctx, s);
         return ANET_ERR;
     }
 
 	if (mtcp_listen(mctx, s, backlog) == -1) {
 		anetSetError(err, "listen: %s", strerror(errno));
-        mtcp_close(s);
+        mtcp_close(mctx, s);
         return ANET_ERR;
 	}
     printf(" [%s:%d] socket %d bind & listen port %d\n", __func__, __LINE__, s, ((struct sockaddr_in *)sa)->sin_port);
