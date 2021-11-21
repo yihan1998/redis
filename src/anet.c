@@ -46,7 +46,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "anet.h"
+#include "config.h"
 
 static void anetSetError(char *err, const char *fmt, ...)
 {
@@ -529,7 +529,7 @@ int anetUnixServer(char *err, char *path, mode_t perm, int backlog)
 static int anetGenericAccept(char *err, int s, struct sockaddr *sa, socklen_t *len) {
     int fd;
     while(1) {
-        fd = accept(s,sa,len);
+        fd = mtcp_accept(mctx, s,sa,len);
         if (fd == -1) {
             if (errno == EINTR)
                 continue;
