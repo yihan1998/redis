@@ -1857,10 +1857,10 @@ void initServer(void) {
 
     /* Create the serverCron() time event, that's our main way to process
      * background operations. */
-    if(aeCreateTimeEvent(server.el, 1, serverCron, NULL, NULL) == AE_ERR) {
-        redisPanic("Can't create the serverCron time event.");
-        exit(1);
-    }
+    // if(aeCreateTimeEvent(server.el, 1, serverCron, NULL, NULL) == AE_ERR) {
+    //     redisPanic("Can't create the serverCron time event.");
+    //     exit(1);
+    // }
 
     /* Create an event handler for accepting new connections in TCP and Unix
      * domain sockets. */
