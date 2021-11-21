@@ -3597,8 +3597,8 @@ int main(int argc, char **argv) {
     int ret;
     ret = mtcp_init("redis.conf");
 	if (ret) {
-		TRACE_CONFIG("Failed to initialize mtcp\n");
-		exit(EXIT_FAILURE);
+		fprintf(stderr, "Failed to initialize mtcp\n");
+		exit(1);
 	}
 
     struct timeval tv;
