@@ -3600,6 +3600,9 @@ int main(int argc, char **argv) {
     mcfg.num_cores = 1;
     mtcp_setconf(&mcfg);
 
+	mtcp_core_affinitize(0);
+    mctx = mtcp_create_context(0);
+
     int ret;
     ret = mtcp_init("mtcp.conf");
 	if (ret) {
