@@ -70,7 +70,7 @@ redisClient *createClient(int fd) {
      * contexts (for instance a Lua script) we need a non connected client. */
     if (fd != -1) {
         anetNonBlock(NULL,fd);
-        anetEnableTcpNoDelay(NULL,fd);
+        // anetEnableTcpNoDelay(NULL,fd);
         if (server.tcpkeepalive)
             anetKeepAlive(NULL,fd,server.tcpkeepalive);
         if (aeCreateFileEvent(server.el,fd,AE_READABLE,
@@ -1183,6 +1183,7 @@ void readQueryFromClient(aeEventLoop *el, int fd, void *privdata, int mask) {
     if (c->querybuf_peak < qblen) c->querybuf_peak = qblen;
     c->querybuf = sdsMakeRoomFor(c->querybuf, readlen);
     nread = mtcp_read(mctx, fd, c->querybuf+qblen, readlen);
+    printf(" [%s:%d] socket %d receive %d Bytes\n", __func__, __LINE__, fd, nread);
     if (nread == -1) {
         if (errno == EAGAIN) {
             nread = 0;
