@@ -3601,7 +3601,7 @@ int main(int argc, char **argv) {
     mtcp_setconf(&mcfg);
 
     int ret;
-    ret = mtcp_init("redis.conf");
+    ret = mtcp_init("mtcp.conf");
 	if (ret) {
 		fprintf(stderr, "Failed to initialize mtcp\n");
 		exit(1);
