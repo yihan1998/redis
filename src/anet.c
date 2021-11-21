@@ -230,6 +230,7 @@ static int anetSetReuseAddr(char *err, int fd) {
 
 static int anetCreateSocket(char *err, int domain) {
     int s;
+    printf(" [%s:%d]\n", __func__, __LINE__);
     if ((s = socket(domain, SOCK_STREAM, 0)) == -1) {
         anetSetError(err, "creating socket: %s", strerror(errno));
         return ANET_ERR;
@@ -250,6 +251,7 @@ static int anetCreateSocket(char *err, int domain) {
 static int anetTcpGenericConnect(char *err, char *addr, int port,
                                  char *source_addr, int flags)
 {
+    printf(" [%s:%d]\n", __func__, __LINE__);
     int s = ANET_ERR, rv;
     char portstr[6];  /* strlen("65535") + 1; */
     struct addrinfo hints, *servinfo, *bservinfo, *p, *b;
