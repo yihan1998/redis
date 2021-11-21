@@ -3594,6 +3594,12 @@ void redisSetProcTitle(char *title) {
 }
 
 int main(int argc, char **argv) {
+    struct mtcp_conf mcfg;
+
+    mtcp_getconf(&mcfg);
+    mcfg.num_cores = 1;
+    mtcp_setconf(&mcfg);
+
     int ret;
     ret = mtcp_init("redis.conf");
 	if (ret) {
