@@ -3593,6 +3593,14 @@ void redisSetProcTitle(char *title) {
 #endif
 }
 
+void SignalHandler(int signum){
+	int i;
+
+    if (signum == SIGINT) {
+        pthread_kill(pthread_self(), SIGTERM);
+    }
+}
+
 int main(int argc, char **argv) {
     struct mtcp_conf mcfg;
 
@@ -3606,6 +3614,8 @@ int main(int argc, char **argv) {
 		fprintf(stderr, "Failed to initialize mtcp\n");
 		exit(1);
 	}
+
+	mtcp_register_signal(SIGINT, SignalHandler);
 
     mtcp_core_affinitize(0);
     mctx = mtcp_create_context(0);
