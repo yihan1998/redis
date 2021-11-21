@@ -47,6 +47,7 @@
 #include <stdio.h>
 
 #include "config.h"
+#include "anet.h"
 
 static void anetSetError(char *err, const char *fmt, ...)
 {
