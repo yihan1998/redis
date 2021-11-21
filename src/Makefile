@@ -54,7 +54,7 @@ FINAL_LDFLAGS=$(LDFLAGS) $(REDIS_LDFLAGS) $(DEBUG)
 FINAL_LIBS=-lm
 DEBUG=-g -ggdb
 
-RTE_SDK = /home/yihan-18/nus-sys/cygnus/dpdk
+RTE_SDK = /home/yihan-18/mtcp/dpdk
 RTE_TARGET = x86_64-native-linuxapp-gcc
 
 # mtcp library and header 
