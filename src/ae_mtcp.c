@@ -90,6 +90,7 @@ static int aeApiPoll(aeEventLoop *eventLoop, struct timeval *tvp) {
             tvp ? (tvp->tv_sec*1000 + tvp->tv_usec/1000) : -1);
     if (retval > 0) {
         int j;
+        printf(" [%s:%d] epoll wait event: %d\n", __func__, __LINE__, retval);
 
         numevents = retval;
         for (j = 0; j < numevents; j++) {
