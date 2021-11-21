@@ -448,7 +448,7 @@ static int anetListen(char *err, int s, int port, int backlog) {
         mtcp_close(mctx, s);
         return ANET_ERR;
 	}
-    printf(" [%s:%d] socket %d bind & listen port %d\n", __func__, __LINE__, s, ((struct sockaddr_in *)sa)->sin_port);
+    printf(" [%s:%d] socket %d bind & listen port %d\n", __func__, __LINE__, s, port);
     return ANET_OK;
 }
 
