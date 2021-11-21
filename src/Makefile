@@ -58,7 +58,7 @@ RTE_SDK = /home/yihan-18/nus-sys/cygnus/dpdk
 RTE_TARGET = x86_64-native-linuxapp-gcc
 
 # mtcp library and header 
-MTCP_FLD    =/home/yihan-18/mtcp/mtcp
+MTCP_FLD    =/home/yihan-18/mtcp
 MTCP_INC    =-I${MTCP_FLD}/include -I${MTCP_FLD}/src/include
 MTCP_LIB    =-L${MTCP_FLD}/lib
 MTCP_TARGET = ${MTCP_LIB}/libmtcp.a
