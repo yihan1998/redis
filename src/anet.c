@@ -432,19 +432,19 @@ static int anetListen(char *err, int s, int port, int backlog) {
     // printf(" [%s:%d] socket %d bind & listen port %d\n", __func__, __LINE__, s, ((struct sockaddr_in *)sa)->sin_port);
     // return ANET_OK;
 
-    struct sockaddr saddr;
+    struct sockaddr_in saddr;
     saddr.sin_family = AF_INET;
 	saddr.sin_addr.s_addr = INADDR_ANY;
 	saddr.sin_port = htons(port);
 
     if (mtcp_bind(mctx, s, (struct sockaddr *)&saddr, sizeof(struct sockaddr_in)) == -1) {
-        anetSetError(err, "bind: %s", strerror(errno));
+        fprintf(stderr, "Failed to bind!\n");
         mtcp_close(mctx, s);
         return ANET_ERR;
     }
 
 	if (mtcp_listen(mctx, s, backlog) == -1) {
-		anetSetError(err, "listen: %s", strerror(errno));
+		fprintf(stderr, "Failed to listen!\n");
         mtcp_close(mctx, s);
         return ANET_ERR;
 	}
