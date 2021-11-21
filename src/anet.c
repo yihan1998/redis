@@ -417,7 +417,7 @@ int anetWrite(int fd, char *buf, int count)
     return totlen;
 }
 
-static int anetListen(char *err, int port, int backlog) {
+static int anetListen(char *err, int s, int port, int backlog) {
     // if (mtcp_bind(mctx,s,sa,len) == -1) {
     //     anetSetError(err, "bind: %s", strerror(errno));
     //     close(s);
@@ -543,8 +543,8 @@ int anetUnixServer(char *err, char *path, mode_t perm, int backlog)
     memset(&sa,0,sizeof(sa));
     sa.sun_family = AF_LOCAL;
     strncpy(sa.sun_path,path,sizeof(sa.sun_path)-1);
-    if (anetListen(err,s,(struct sockaddr*)&sa,sizeof(sa),backlog) == ANET_ERR)
-        return ANET_ERR;
+    // if (anetListen(err,s,(struct sockaddr*)&sa,sizeof(sa),backlog) == ANET_ERR)
+        // return ANET_ERR;
     if (perm)
         chmod(sa.sun_path, perm);
     return s;
