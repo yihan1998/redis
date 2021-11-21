@@ -60,26 +60,7 @@ static void anetSetError(char *err, const char *fmt, ...)
 }
 
 int anetSetBlock(char *err, int fd, int non_block) {
-    int flags;
-
-    /* Set the socket blocking (if non_block is zero) or non-blocking.
-     * Note that fcntl(2) for F_GETFL and F_SETFL can't be
-     * interrupted by a signal. */
-    if ((flags = fcntl(fd, F_GETFL)) == -1) {
-        anetSetError(err, "fcntl(F_GETFL): %s", strerror(errno));
-        return ANET_ERR;
-    }
-
-    if (non_block)
-        flags |= O_NONBLOCK;
-    else
-        flags &= ~O_NONBLOCK;
-
-    if (fcntl(fd, F_SETFL, flags) == -1) {
-        anetSetError(err, "fcntl(F_SETFL,O_NONBLOCK): %s", strerror(errno));
-        return ANET_ERR;
-    }
-    return ANET_OK;
+    return mtcp_setsock_nonblock(mctx, fd);
 }
 
 int anetNonBlock(char *err, int fd) {
@@ -288,7 +269,7 @@ static int anetTcpGenericConnect(char *err, char *addr, int port,
          * the next entry in servinfo. */
         if ((s = socket(p->ai_family,p->ai_socktype,p->ai_protocol)) == -1)
             continue;
-        if (anetSetReuseAddr(err,s) == ANET_ERR) goto error;
+        // if (anetSetReuseAddr(err,s) == ANET_ERR) goto error;
         if (flags & ANET_CONNECT_NONBLOCK && anetNonBlock(err,s) != ANET_OK)
             goto error;
         if (source_addr) {
@@ -483,7 +464,7 @@ static int _anetTcpServer(char *err, int port, char *bindaddr, int af, int backl
             continue;
 
         if (af == AF_INET6 && anetV6Only(err,s) == ANET_ERR) goto error;
-        if (anetSetReuseAddr(err,s) == ANET_ERR) goto error;
+        // if (anetSetReuseAddr(err,s) == ANET_ERR) goto error;
         if (anetListen(err,s,p->ai_addr,p->ai_addrlen,backlog) == ANET_ERR) goto error;
         goto end;
     }
