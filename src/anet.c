@@ -498,6 +498,7 @@ static int _anetTcpServer(char *err, int port, char *bindaddr, int af, int backl
 //     freeaddrinfo(servinfo);
 //     return s;
 
+    printf(" [%s:%d] creating TCP server\n", __func__, __LINE__);
     int s, rv;
 	struct sockaddr_in saddr;
 	int ret;

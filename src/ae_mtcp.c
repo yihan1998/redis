@@ -24,6 +24,7 @@ static int aeApiCreate(aeEventLoop *eventLoop) {
         zfree(state);
         return -1;
     }
+    printf(" [%s:%d] create epoll socket %d\n", __func__, __LINE__, state->epfd);
     eventLoop->apidata = state;
     return 0;
 }
