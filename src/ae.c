@@ -400,6 +400,7 @@ int aeProcessEvents(aeEventLoop *eventLoop, int flags)
         }
 
         numevents = aeApiPoll(eventLoop, tvp);
+        printf(" [%s:%d] numevents: %d\n", __func__, __LINE__, numevents);
         for (j = 0; j < numevents; j++) {
             aeFileEvent *fe = &eventLoop->events[eventLoop->fired[j].fd];
             int mask = eventLoop->fired[j].mask;
@@ -451,6 +452,7 @@ int aeWait(int fd, int mask, long long milliseconds) {
 
 void aeMain(aeEventLoop *eventLoop) {
     eventLoop->stop = 0;
+    printf(" [%s:%d] Start main process\n", __func__, __LINE__);
     while (!eventLoop->stop) {
         if (eventLoop->beforesleep != NULL)
             eventLoop->beforesleep(eventLoop);
