@@ -87,6 +87,7 @@ redisClient *createClient(int fd) {
             logging(ERROR, "cygnus_fcntl() set sock to non-block failed!");
             exit(EXIT_FAILURE);
         }
+        fprintf(stdout, " [%s:%d] add AE_READABLE to socket %d\n", __func__, __LINE__, fd);
         if (aeCreateFileEvent(server.el,fd,AE_READABLE, readQueryFromClient, c) == AE_ERR) {
             cygnus_close(fd);
             zfree(c);
