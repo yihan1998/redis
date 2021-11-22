@@ -31,6 +31,9 @@
 #include <sys/uio.h>
 #include <math.h>
 
+#include <cygnus.h>
+#include <cygnus_api.h>
+
 static void setProtocolError(redisClient *c, int pos);
 
 /* To evaluate the output buffer size of a client we need to get size of
@@ -69,14 +72,23 @@ redisClient *createClient(int fd) {
      * in the context of a client. When commands are executed in other
      * contexts (for instance a Lua script) we need a non connected client. */
     if (fd != -1) {
-        anetNonBlock(NULL,fd);
-        anetEnableTcpNoDelay(NULL,fd);
-        if (server.tcpkeepalive)
-            anetKeepAlive(NULL,fd,server.tcpkeepalive);
-        if (aeCreateFileEvent(server.el,fd,AE_READABLE,
-            readQueryFromClient, c) == AE_ERR)
-        {
-            close(fd);
+        // anetNonBlock(NULL,fd);
+        // anetEnableTcpNoDelay(NULL,fd);
+        // if (server.tcpkeepalive)
+        //     anetKeepAlive(NULL,fd,server.tcpkeepalive);
+        // if (aeCreateFileEvent(server.el,fd,AE_READABLE,
+        //     readQueryFromClient, c) == AE_ERR)
+        // {
+        //     close(fd);
+        //     zfree(c);
+        //     return NULL;
+        // }
+        if (cygnus_fcntl(new_sock, F_SETFL, O_NONBLOCK) == -1) {
+            logging(ERROR, "cygnus_fcntl() set sock to non-block failed!");
+            exit(EXIT_FAILURE);
+        }
+        if (aeCreateFileEvent(server.el,fd,AE_READABLE, readQueryFromClient, c) == AE_ERR) {
+            cygnus_close(fd);
             zfree(c);
             return NULL;
         }

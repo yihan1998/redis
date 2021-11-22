@@ -48,6 +48,9 @@
 
 #include "anet.h"
 
+#include <cygnus.h>
+#include <cygnus_api.h>
+
 static void anetSetError(char *err, const char *fmt, ...)
 {
     va_list ap;
@@ -559,7 +562,7 @@ int anetUnixServer(char *err, char *path, mode_t perm, int backlog)
 static int anetGenericAccept(char *err, int s, struct sockaddr *sa, socklen_t *len) {
     int fd;
     while(1) {
-        fd = accept(s,sa,len);
+        fd = cygnus_accept(s,sa,len);
         if (fd == -1) {
             if (errno == EINTR)
                 continue;
