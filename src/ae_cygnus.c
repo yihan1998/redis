@@ -41,7 +41,7 @@ static int aeApiCreate(aeEventLoop *eventLoop) {
     aeApiState *state = zmalloc(sizeof(aeApiState));
 
     if (!state) return -1;
-    state->events = zmalloc(sizeof(struct epoll_event)*eventLoop->setsize);
+    state->events = zmalloc(sizeof(struct cygnus_epoll_event)*eventLoop->setsize);
     if (!state->events) {
         zfree(state);
         return -1;
@@ -59,7 +59,7 @@ static int aeApiCreate(aeEventLoop *eventLoop) {
 static int aeApiResize(aeEventLoop *eventLoop, int setsize) {
     aeApiState *state = eventLoop->apidata;
 
-    state->events = zrealloc(state->events, sizeof(struct epoll_event)*setsize);
+    state->events = zrealloc(state->events, sizeof(struct cygnus_epoll_event)*setsize);
     return 0;
 }
 
@@ -120,7 +120,7 @@ static int aeApiPoll(aeEventLoop *eventLoop, struct timeval *tvp) {
         numevents = retval;
         for (j = 0; j < numevents; j++) {
             int mask = 0;
-            struct epoll_event *e = state->events+j;
+            struct cygnus_epoll_event *e = state->events+j;
 
             if (e->events & CYGNUS_EPOLLIN) mask |= AE_READABLE;
             if (e->events & CYGNUS_EPOLLOUT) mask |= AE_WRITABLE;
