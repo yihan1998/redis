@@ -1215,6 +1215,7 @@ int rdbLoad(char *filename) {
 
         decrRefCount(key);
     }
+    printf(" [%s:%d] Verify checksum\n", __func__, __LINE__);
     /* Verify the checksum if RDB version is >= 5 */
     if (rdbver >= 5 && server.rdb_checksum) {
         uint64_t cksum, expected = rdb.cksum;
