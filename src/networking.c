@@ -612,7 +612,7 @@ static void acceptCommonHandler(int fd, int flags) {
         char *err = "-ERR max number of clients reached\r\n";
 
         /* That's a best effort error message, don't check write errors */
-        if (write(c->fd,err,strlen(err)) == -1) {
+        if (cygnus_write(c->fd,err,strlen(err)) == -1) {
             /* Nothing to do, Just to avoid the warning... */
         }
         server.stat_rejected_conn++;
@@ -823,7 +823,7 @@ void sendReplyToClient(aeEventLoop *el, int fd, void *privdata, int mask) {
 
     while(c->bufpos > 0 || listLength(c->reply)) {
         if (c->bufpos > 0) {
-            nwritten = write(fd,c->buf+c->sentlen,c->bufpos-c->sentlen);
+            nwritten = cygnus_write(fd,c->buf+c->sentlen,c->bufpos-c->sentlen);
             // printf(" [%s:%d] send len: %d\n", __func__, __LINE__, nwritten);
             if (nwritten <= 0) break;
             c->sentlen += nwritten;
@@ -1195,7 +1195,7 @@ void readQueryFromClient(aeEventLoop *el, int fd, void *privdata, int mask) {
     qblen = sdslen(c->querybuf);
     if (c->querybuf_peak < qblen) c->querybuf_peak = qblen;
     c->querybuf = sdsMakeRoomFor(c->querybuf, readlen);
-    nread = read(fd, c->querybuf+qblen, readlen);
+    nread = cygnus_read(fd, c->querybuf+qblen, readlen);
     if (nread == -1) {
         if (errno == EAGAIN) {
             nread = 0;
