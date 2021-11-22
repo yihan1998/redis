@@ -400,7 +400,7 @@ int aeProcessEvents(aeEventLoop *eventLoop, int flags)
         }
 
         numevents = aeApiPoll(eventLoop, tvp);
-        printf(" [%s:%d] numevents: %d\n", __func__, __LINE__, numevents);
+        // printf(" [%s:%d] numevents: %d\n", __func__, __LINE__, numevents);
         for (j = 0; j < numevents; j++) {
             aeFileEvent *fe = &eventLoop->events[eventLoop->fired[j].fd];
             int mask = eventLoop->fired[j].mask;
