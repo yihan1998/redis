@@ -83,7 +83,7 @@ redisClient *createClient(int fd) {
         //     zfree(c);
         //     return NULL;
         // }
-        if (cygnus_fcntl(new_sock, F_SETFL, O_NONBLOCK) == -1) {
+        if (cygnus_fcntl(fd, F_SETFL, O_NONBLOCK) == -1) {
             logging(ERROR, "cygnus_fcntl() set sock to non-block failed!");
             exit(EXIT_FAILURE);
         }
