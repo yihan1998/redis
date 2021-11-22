@@ -565,13 +565,9 @@ static int anetGenericAccept(char *err, int s, struct sockaddr *sa, socklen_t *l
     int fd;
     while(1) {
         fd = cygnus_accept(s,sa,len);
-        if (fd == -1) {
-            if (errno == EINTR)
-                continue;
-            else {
-                anetSetError(err, "accept: %s", strerror(errno));
-                return ANET_ERR;
-            }
+        if (fd == -EINVAL) {
+            fd = -1;
+            break;
         }
         printf(" [%s:%d] socket %d accept connection via %d\n", __func__, __LINE__, s, fd);
         break;
