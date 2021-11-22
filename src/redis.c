@@ -1684,52 +1684,57 @@ void checkTcpBacklogSettings(void) {
  * configuration but the function is not able to bind * for at least
  * one of the IPv4 or IPv6 protocols. */
 int listenToPort(int port, int *fds, int *count) {
-    int j;
+    // int j;
 
-    /* Force binding of 0.0.0.0 if no bind address is specified, always
-     * entering the loop if j == 0. */
-    if (server.bindaddr_count == 0) server.bindaddr[0] = NULL;
-    for (j = 0; j < server.bindaddr_count || j == 0; j++) {
-        if (server.bindaddr[j] == NULL) {
-            /* Bind * for both IPv6 and IPv4, we enter here only if
-             * server.bindaddr_count == 0. */
-            fds[*count] = anetTcp6Server(server.neterr,port,NULL,
-                server.tcp_backlog);
-            if (fds[*count] != ANET_ERR) {
-                anetNonBlock(NULL,fds[*count]);
-                (*count)++;
+    // /* Force binding of 0.0.0.0 if no bind address is specified, always
+    //  * entering the loop if j == 0. */
+    // if (server.bindaddr_count == 0) server.bindaddr[0] = NULL;
+    // for (j = 0; j < server.bindaddr_count || j == 0; j++) {
+    //     if (server.bindaddr[j] == NULL) {
+    //         /* Bind * for both IPv6 and IPv4, we enter here only if
+    //          * server.bindaddr_count == 0. */
+    //         fds[*count] = anetTcp6Server(server.neterr,port,NULL,
+    //             server.tcp_backlog);
+    //         if (fds[*count] != ANET_ERR) {
+    //             anetNonBlock(NULL,fds[*count]);
+    //             (*count)++;
 
-                /* Bind the IPv4 address as well. */
-                fds[*count] = anetTcpServer(server.neterr,port,NULL,
-                    server.tcp_backlog);
-                if (fds[*count] != ANET_ERR) {
-                    anetNonBlock(NULL,fds[*count]);
-                    (*count)++;
-                }
-            }
-            /* Exit the loop if we were able to bind * on IPv4 and IPv6,
-             * otherwise fds[*count] will be ANET_ERR and we'll print an
-             * error and return to the caller with an error. */
-            if (*count == 2) break;
-        } else if (strchr(server.bindaddr[j],':')) {
-            /* Bind IPv6 address. */
-            fds[*count] = anetTcp6Server(server.neterr,port,server.bindaddr[j],
-                server.tcp_backlog);
-        } else {
-            /* Bind IPv4 address. */
-            fds[*count] = anetTcpServer(server.neterr,port,server.bindaddr[j],
-                server.tcp_backlog);
-        }
-        if (fds[*count] == ANET_ERR) {
-            redisLog(REDIS_WARNING,
-                "Creating Server TCP listening socket %s:%d: %s",
-                server.bindaddr[j] ? server.bindaddr[j] : "*",
-                port, server.neterr);
-            return REDIS_ERR;
-        }
-        anetNonBlock(NULL,fds[*count]);
-        (*count)++;
-    }
+    //             /* Bind the IPv4 address as well. */
+    //             fds[*count] = anetTcpServer(server.neterr,port,NULL,
+    //                 server.tcp_backlog);
+    //             if (fds[*count] != ANET_ERR) {
+    //                 anetNonBlock(NULL,fds[*count]);
+    //                 (*count)++;
+    //             }
+    //         }
+    //         /* Exit the loop if we were able to bind * on IPv4 and IPv6,
+    //          * otherwise fds[*count] will be ANET_ERR and we'll print an
+    //          * error and return to the caller with an error. */
+    //         if (*count == 2) break;
+    //     } else if (strchr(server.bindaddr[j],':')) {
+    //         /* Bind IPv6 address. */
+    //         fds[*count] = anetTcp6Server(server.neterr,port,server.bindaddr[j],
+    //             server.tcp_backlog);
+    //     } else {
+    //         /* Bind IPv4 address. */
+    //         fds[*count] = anetTcpServer(server.neterr,port,server.bindaddr[j],
+    //             server.tcp_backlog);
+    //     }
+    //     if (fds[*count] == ANET_ERR) {
+    //         redisLog(REDIS_WARNING,
+    //             "Creating Server TCP listening socket %s:%d: %s",
+    //             server.bindaddr[j] ? server.bindaddr[j] : "*",
+    //             port, server.neterr);
+    //         return REDIS_ERR;
+    //     }
+    //     anetNonBlock(NULL,fds[*count]);
+    //     (*count)++;
+    // }
+    // return REDIS_OK;
+    
+    fds[*count] = anetTcpServer(server.neterr,port,NULL,server.tcp_backlog);
+    anetNonBlock(NULL,fds[*count]);
+    (*count)++;
     return REDIS_OK;
 }
 
@@ -3593,7 +3598,13 @@ void redisSetProcTitle(char *title) {
 #endif
 }
 
-int main(int argc, char **argv) {
+// int main(int argc, char **argv) {
+void * _redis_main(void * arg) {
+    struct cygnus_param * param = (struct cygnus_param *)arg;
+
+    int argc = param->argc;
+    char ** argv = param->argv;
+
     struct timeval tv;
 
     /* We need to initialize our libraries, and the server configuration. */
@@ -3710,6 +3721,42 @@ int main(int argc, char **argv) {
     aeSetBeforeSleepProc(server.el,beforeSleep);
     aeMain(server.el);
     aeDeleteEventLoop(server.el);
+    return 0;
+}
+
+int redis_main(void * arg) {
+    cygnus_init((struct cygnus_param *)arg);
+
+    int ret;
+
+    sail_init();
+    
+    /* Create polling thread */
+    if((ret = mthread_create(&mid, NULL, _redis_main, arg)) < 0) {
+        printf("mthread_create() error: %d\n", ret);
+        exit(1);
+    } else {
+        logging(INFO, "[%s on core %d] server_thread create done(mid: %lu)", __func__, lcore_id, mid);
+    }
+
+    /* Test mthread_join */
+    if ((ret = mthread_join(mid, NULL)) < 0) {
+        printf("mthread_join() error: %d\n", ret);
+        exit(1);
+    }
+
+    logging(INFO, "[%s on core %d] mthread %lu joined!", __func__, lcore_id, mid);
+
+    sail_exit();
+}
+
+int main(int argc, char ** argv) {
+    struct cygnus_param * param = cygnus_config(argc, argv);
+
+    cygnus_spawn(redis_main, param);
+
+    logging(DEBUG, " [%s on core %d] test finished, return from main", __func__, lcore_id);
+
     return 0;
 }
 

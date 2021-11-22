@@ -463,39 +463,69 @@ static int anetV6Only(char *err, int s) {
 
 static int _anetTcpServer(char *err, int port, char *bindaddr, int af, int backlog)
 {
-    int s, rv;
-    char _port[6];  /* strlen("65535") */
-    struct addrinfo hints, *servinfo, *p;
+//     int s, rv;
+//     char _port[6];  /* strlen("65535") */
+//     struct addrinfo hints, *servinfo, *p;
 
-    snprintf(_port,6,"%d",port);
-    memset(&hints,0,sizeof(hints));
-    hints.ai_family = af;
-    hints.ai_socktype = SOCK_STREAM;
-    hints.ai_flags = AI_PASSIVE;    /* No effect if bindaddr != NULL */
+//     snprintf(_port,6,"%d",port);
+//     memset(&hints,0,sizeof(hints));
+//     hints.ai_family = af;
+//     hints.ai_socktype = SOCK_STREAM;
+//     hints.ai_flags = AI_PASSIVE;    /* No effect if bindaddr != NULL */
 
-    if ((rv = getaddrinfo(bindaddr,_port,&hints,&servinfo)) != 0) {
-        anetSetError(err, "%s", gai_strerror(rv));
-        return ANET_ERR;
+//     if ((rv = getaddrinfo(bindaddr,_port,&hints,&servinfo)) != 0) {
+//         anetSetError(err, "%s", gai_strerror(rv));
+//         return ANET_ERR;
+//     }
+//     for (p = servinfo; p != NULL; p = p->ai_next) {
+//         if ((s = socket(p->ai_family,p->ai_socktype,p->ai_protocol)) == -1)
+//             continue;
+
+//         if (af == AF_INET6 && anetV6Only(err,s) == ANET_ERR) goto error;
+//         if (anetSetReuseAddr(err,s) == ANET_ERR) goto error;
+//         if (anetListen(err,s,p->ai_addr,p->ai_addrlen,backlog) == ANET_ERR) goto error;
+//         goto end;
+//     }
+//     if (p == NULL) {
+//         anetSetError(err, "unable to bind socket");
+//         goto error;
+//     }
+
+// error:
+//     s = ANET_ERR;
+// end:
+//     freeaddrinfo(servinfo);
+//     return s;
+    int s = cygnus_socket(AF_INET, SOCK_STREAM, 0);
+    if (s == -1) {
+        fprintf(stderr, "cygnus_socket() failed!\n");
+        exit(1);
     }
-    for (p = servinfo; p != NULL; p = p->ai_next) {
-        if ((s = socket(p->ai_family,p->ai_socktype,p->ai_protocol)) == -1)
-            continue;
 
-        if (af == AF_INET6 && anetV6Only(err,s) == ANET_ERR) goto error;
-        if (anetSetReuseAddr(err,s) == ANET_ERR) goto error;
-        if (anetListen(err,s,p->ai_addr,p->ai_addrlen,backlog) == ANET_ERR) goto error;
-        goto end;
-    }
-    if (p == NULL) {
-        anetSetError(err, "unable to bind socket");
-        goto error;
+    if (cygnus_fcntl(s, F_SETFL, O_NONBLOCK) == -1) {
+        fprintf(stderr, "cygnus_fcntl() set sock to non-block failed!\n");
+        exit(1);
     }
 
-error:
-    s = ANET_ERR;
-end:
-    freeaddrinfo(servinfo);
-    return s;
+    int ret;
+    struct sockaddr_in addr;
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = INADDR_ANY;
+    addr.sin_port = htons(port);
+
+    if ((ret = cygnus_bind(s, (struct sockaddr *)&addr, sizeof(addr))) == -1) {
+        fprintf(stderr, "cygnus_bind() failed!\n");
+        exit(1);
+    } else {
+        fprintf(stdout, " [%s on core %d] bind to port %u\n", __func__, lcore_id, port);
+    }
+
+    if((ret = cygnus_listen(s, 1024)) == -1) {
+        fprintf(stderr, "cygnus_listen() failed!");
+        exit(1);
+    } else {
+        fprintf(stdout, " [%s on core %d] listen to port %u\n", __func__, lcore_id, port);
+    }
 }
 
 int anetTcpServer(char *err, int port, char *bindaddr, int backlog)
