@@ -529,6 +529,8 @@ static int _anetTcpServer(char *err, int port, char *bindaddr, int af, int backl
     } else {
         fprintf(stdout, " [%s:%d] socket %d listen to port %u\n", __func__, __LINE__, s, port);
     }
+
+    return s;
 }
 
 int anetTcpServer(char *err, int port, char *bindaddr, int backlog)
