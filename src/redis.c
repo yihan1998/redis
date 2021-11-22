@@ -3613,7 +3613,7 @@ void * _redis_main(void * arg) {
 
     /* We need to initialize our libraries, and the server configuration. */
 #ifdef INIT_SETPROCTITLE_REPLACEMENT
-    spt_init(argc, argv);
+    // spt_init(argc, argv);
 #endif
     setlocale(LC_COLLATE,"");
     zmalloc_enable_thread_safeness();
