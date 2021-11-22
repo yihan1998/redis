@@ -1156,6 +1156,7 @@ int rdbLoad(char *filename) {
         return REDIS_ERR;
     }
 
+    printf(" [%s:%d] Start loading database\n", __func__, __LINE__);
     startLoading(fp);
     while(1) {
         robj *key, *val;
@@ -1230,6 +1231,7 @@ int rdbLoad(char *filename) {
 
     fclose(fp);
     stopLoading();
+    printf(" [%s:%d] Stop loading database\n", __func__, __LINE__);
     return REDIS_OK;
 
 eoferr: /* unexpected end of file is handled here with a fatal exit */
