@@ -126,6 +126,7 @@ static int aeApiPoll(aeEventLoop *eventLoop, struct timeval *tvp) {
             if (e->events & CYGNUS_EPOLLOUT) mask |= AE_WRITABLE;
             if (e->events & CYGNUS_EPOLLERR) mask |= AE_WRITABLE;
             if (e->events & CYGNUS_EPOLLHUP) mask |= AE_WRITABLE;
+            printf(" [%s:%d] receive %x on socket %d\n", __func__, __LINE__, e->events, e->data.fd);
             eventLoop->fired[j].fd = e->data.fd;
             eventLoop->fired[j].mask = mask;
         }
