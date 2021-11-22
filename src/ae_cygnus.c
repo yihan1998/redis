@@ -114,6 +114,7 @@ static int aeApiPoll(aeEventLoop *eventLoop, struct timeval *tvp) {
 
     retval = cygnus_epoll_wait(state->epfd,state->events,eventLoop->setsize, -1);
     if (retval > 0) {
+        printf(" [%s:%d] receive %d events from epoll\n", __func__, __LINE__, retval);
         int j;
 
         numevents = retval;
