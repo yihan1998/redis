@@ -27,24 +27,26 @@ INSTALL_BIN=$(PREFIX)/bin
 INSTALL=install
 
 # Default allocator
-ifeq ($(uname_S),Linux)
-	MALLOC=jemalloc
-else
-	MALLOC=libc
-endif
+# ifeq ($(uname_S),Linux)
+# 	MALLOC=jemalloc
+# else
+# 	MALLOC=libc
+# endif
+
+MALLOC=libc
 
 # Backwards compatibility for selecting an allocator
-ifeq ($(USE_TCMALLOC),yes)
-	MALLOC=tcmalloc
-endif
+# ifeq ($(USE_TCMALLOC),yes)
+# 	MALLOC=tcmalloc
+# endif
 
-ifeq ($(USE_TCMALLOC_MINIMAL),yes)
-	MALLOC=tcmalloc_minimal
-endif
+# ifeq ($(USE_TCMALLOC_MINIMAL),yes)
+# 	MALLOC=tcmalloc_minimal
+# endif
 
-ifeq ($(USE_JEMALLOC),yes)
-	MALLOC=jemalloc
-endif
+# ifeq ($(USE_JEMALLOC),yes)
+# 	MALLOC=jemalloc
+# endif
 
 # Override default settings if possible
 -include .make-settings
