@@ -1737,7 +1737,6 @@ int listenToPort(int port, int *fds, int *count) {
     // return REDIS_OK;
     
     fds[*count] = anetTcpServer(server.neterr,port,NULL,server.tcp_backlog);
-    anetNonBlock(NULL,fds[*count]);
     (*count)++;
     return REDIS_OK;
 }
@@ -1872,6 +1871,7 @@ void initServer(void) {
     /* Create an event handler for accepting new connections in TCP and Unix
      * domain sockets. */
     for (j = 0; j < server.ipfd_count; j++) {
+        fprintf(stdout, " [%s:%d] add AE_READABLE to socket %d\n", __func__, __LINE__, server.ipfd[j]);
         if (aeCreateFileEvent(server.el, server.ipfd[j], AE_READABLE,
             acceptTcpHandler,NULL) == AE_ERR)
             {
