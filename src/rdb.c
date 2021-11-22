@@ -1194,10 +1194,8 @@ int rdbLoad(char *filename) {
             continue;
         }
         /* Read key */
-        printf(" [%s:%d] Loading string object\n", __func__, __LINE__);
         if ((key = rdbLoadStringObject(&rdb)) == NULL) goto eoferr;
         /* Read value */
-        printf(" [%s:%d] Loading object\n", __func__, __LINE__);
         if ((val = rdbLoadObject(type,&rdb)) == NULL) goto eoferr;
         /* Check if the key already expired. This function is used when loading
          * an RDB file from disk, either at startup, or when an RDB was
