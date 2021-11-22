@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "redis.h": "c"
+        "redis.h": "c",
+        "config.h": "c",
+        "anet.h": "c"
     }
 }

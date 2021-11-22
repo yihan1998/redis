@@ -517,14 +517,14 @@ static int _anetTcpServer(char *err, int port, char *bindaddr, int af, int backl
         fprintf(stderr, "cygnus_bind() failed!\n");
         exit(1);
     } else {
-        fprintf(stdout, " [%s on core %d] bind to port %u\n", __func__, lcore_id, port);
+        fprintf(stdout, " [%s:%d] bind to port %u\n", __func__, __LINE__, port);
     }
 
     if((ret = cygnus_listen(s, 1024)) == -1) {
         fprintf(stderr, "cygnus_listen() failed!");
         exit(1);
     } else {
-        fprintf(stdout, " [%s on core %d] listen to port %u\n", __func__, lcore_id, port);
+        fprintf(stdout, " [%s:%d] listen to port %u\n", __func__, __LINE__, port);
     }
 }
 

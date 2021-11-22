@@ -53,6 +53,10 @@
 #include <sys/utsname.h>
 #include <locale.h>
 
+#include <cygnus.h>
+#include <cygnus_api.h>
+#include <mthread.h>
+
 /* Our shared "common" objects */
 
 struct sharedObjectsStruct shared;
@@ -3728,24 +3732,25 @@ int redis_main(void * arg) {
     cygnus_init((struct cygnus_param *)arg);
 
     int ret;
+    mthread_t mid;
 
     sail_init();
     
     /* Create polling thread */
     if((ret = mthread_create(&mid, NULL, _redis_main, arg)) < 0) {
-        printf("mthread_create() error: %d\n", ret);
+        fprintf(stderr, " mthread_create() error: %d\n", ret);
         exit(1);
     } else {
-        logging(INFO, "[%s on core %d] server_thread create done(mid: %lu)", __func__, lcore_id, mid);
+        fprintf(stdout, "[%s on core %d] server_thread create done(mid: %lu)", __func__, __LINE__, mid);
     }
 
     /* Test mthread_join */
     if ((ret = mthread_join(mid, NULL)) < 0) {
-        printf("mthread_join() error: %d\n", ret);
+        fprintf(stderr, " mthread_join() error: %d\n", ret);
         exit(1);
     }
 
-    logging(INFO, "[%s on core %d] mthread %lu joined!", __func__, lcore_id, mid);
+    fprintf(stdout, "[%s:%d] mthread %lu joined!", __func__, __LINE__, mid);
 
     sail_exit();
 }
@@ -3755,7 +3760,7 @@ int main(int argc, char ** argv) {
 
     cygnus_spawn(redis_main, param);
 
-    logging(DEBUG, " [%s on core %d] test finished, return from main", __func__, lcore_id);
+    logging(DEBUG, " [%s on core %d] test finished, return from main", __func__, __LINE__);
 
     return 0;
 }
