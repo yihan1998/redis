@@ -166,9 +166,20 @@ ifneq ($(strip $(PREV_FINAL_LDFLAGS)), $(strip $(FINAL_LDFLAGS)))
 .make-prerequisites: persist-settings
 endif
 
+CYGNUS_DIR = /home/yihan-18/nus-sys/cygnus
+CYGNUS_CFLAGS = -O3 -g -fno-stack-protector -fPIC
+CYGNUS_INC = -I/usr/include/ -I$(CETUS_DIR)/Cygnus/include/ -I$(CETUS_DIR)/mthread/include/
+CYGNUS_LIB = -L$(CETUS_DIR)/mthread -lmthread -L$(CETUS_DIR)/Cygnus -lcygnus
+
+# DPDK
+LIBDPDK_CFLAGS := $(shell pkg-config --cflags libdpdk)
+LIBDPDK_LDFLAGS := $(shell pkg-config --libs libdpdk)
+CYGNUS_CFLAGS += $(LIBDPDK_CFLAGS)
+CYGNUS_LDFLAGS := $(LIBDPDK_LDFLAGS)
+
 # redis-server
 $(REDIS_SERVER_NAME): $(REDIS_SERVER_OBJ)
-	$(REDIS_LD) -o $@ $^ ../deps/hiredis/libhiredis.a ../deps/lua/src/liblua.a $(FINAL_LIBS)
+	$(REDIS_LD) $(CYGNUS_LDFLAGS) -o $@ $^ ../deps/hiredis/libhiredis.a ../deps/lua/src/liblua.a $(FINAL_LIBS) $(CYGNUS_LIB)
 
 # redis-sentinel
 $(REDIS_SENTINEL_NAME): $(REDIS_SERVER_NAME)
@@ -194,7 +205,7 @@ $(REDIS_CHECK_AOF_NAME): $(REDIS_CHECK_AOF_OBJ)
 # building it should complete before building any other object. Instead of
 # depending on a single artifact, build all dependencies first.
 %.o: %.c .make-prerequisites
-	$(REDIS_CC) -c $<
+	$(REDIS_CC) $(CYGNUS_CFLAGS) -c $<
 
 clean:
 	rm -rf $(REDIS_SERVER_NAME) $(REDIS_SENTINEL_NAME) $(REDIS_CLI_NAME) $(REDIS_BENCHMARK_NAME) $(REDIS_CHECK_DUMP_NAME) $(REDIS_CHECK_AOF_NAME) *.o *.gcda *.gcno *.gcov redis.info lcov-html
