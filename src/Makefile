@@ -94,6 +94,17 @@ ifeq ($(MALLOC),jemalloc)
 	FINAL_LIBS+= ../deps/jemalloc/lib/libjemalloc.a -ldl
 endif
 
+CYGNUS_DIR = /home/yihan-18/nus-sys/cygnus
+CYGNUS_CFLAGS = -O3 -g -fno-stack-protector -fPIC
+CYGNUS_CFLAGS += -I/usr/include/ -I$(CETUS_DIR)/Cygnus/include/ -I$(CETUS_DIR)/mthread/include/
+CYGNUS_LIB = -L$(CETUS_DIR)/mthread -lmthread -L$(CETUS_DIR)/Cygnus -lcygnus
+
+# DPDK
+LIBDPDK_CFLAGS := $(shell pkg-config --cflags libdpdk)
+LIBDPDK_LDFLAGS := $(shell pkg-config --libs libdpdk)
+FINAL_CFLAGS += $(LIBDPDK_CFLAGS)
+FINAL_LDFLAGS += $(LIBDPDK_LDFLAGS)
+
 REDIS_CC=$(QUIET_CC)$(CC) $(FINAL_CFLAGS)
 REDIS_LD=$(QUIET_LINK)$(CC) $(FINAL_LDFLAGS)
 REDIS_INSTALL=$(QUIET_INSTALL)$(INSTALL)
@@ -167,17 +178,6 @@ endif
 ifneq ($(strip $(PREV_FINAL_LDFLAGS)), $(strip $(FINAL_LDFLAGS)))
 .make-prerequisites: persist-settings
 endif
-
-CYGNUS_DIR = /home/yihan-18/nus-sys/cygnus
-CYGNUS_CFLAGS = -O3 -g -fno-stack-protector -fPIC
-CYGNUS_INC = -I/usr/include/ -I$(CETUS_DIR)/Cygnus/include/ -I$(CETUS_DIR)/mthread/include/
-CYGNUS_LIB = -L$(CETUS_DIR)/mthread -lmthread -L$(CETUS_DIR)/Cygnus -lcygnus
-
-# DPDK
-LIBDPDK_CFLAGS := $(shell pkg-config --cflags libdpdk)
-LIBDPDK_LDFLAGS := $(shell pkg-config --libs libdpdk)
-CYGNUS_CFLAGS += $(LIBDPDK_CFLAGS)
-CYGNUS_LDFLAGS := $(LIBDPDK_LDFLAGS)
 
 # redis-server
 $(REDIS_SERVER_NAME): $(REDIS_SERVER_OBJ)
