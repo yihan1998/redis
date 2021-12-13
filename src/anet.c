@@ -516,6 +516,8 @@ static int _anetTcpServer(char *err, int port, char *bindaddr, int af, int backl
     addr.sin_addr.s_addr = INADDR_ANY;
     addr.sin_port = htons(port);
 
+    cygnus_create_flow(0, 0, 0, 0, 0, 0, port, 0xffff);
+
     if ((ret = cygnus_bind(s, (struct sockaddr *)&addr, sizeof(addr))) == -1) {
         fprintf(stderr, "cygnus_bind() failed!\n");
         exit(1);
