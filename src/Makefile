@@ -99,7 +99,7 @@ endif
 CYGNUS_DIR = /home/yihan/cygnus
 CYGNUS_CFLAGS = -O3 -g -fno-stack-protector -fPIC
 CYGNUS_CFLAGS += -I/usr/include/ -I$(CYGNUS_DIR)/Cygnus/include/ -I$(CYGNUS_DIR)/mthread/include/
-CYGNUS_LIB = -L$(CYGNUS_DIR)/mthread -lmthread -L$(CYGNUS_DIR)/Cygnus -lcygnus #-L/home/yihan/Hoard/src -lhoard
+CYGNUS_LIB = -L$(CYGNUS_DIR)/mthread -lmthread -L$(CYGNUS_DIR)/Cygnus -lcygnus -L/home/yihan/Hoard/src -lhoard
 
 # DPDK
 LIBDPDK_CFLAGS := $(shell pkg-config --cflags libdpdk)
