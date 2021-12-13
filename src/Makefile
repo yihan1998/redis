@@ -54,9 +54,6 @@ FINAL_LDFLAGS=$(LDFLAGS) $(REDIS_LDFLAGS) $(DEBUG)
 FINAL_LIBS=-lm
 DEBUG=-g -ggdb
 
-RTE_SDK = /home/yihan/mtcp/dpdk
-RTE_TARGET = x86_64-native-linuxapp-gcc
-
 # mtcp library and header 
 MTCP_FLD    =/home/yihan/mtcp/mtcp
 MTCP_INC    =-I${MTCP_FLD}/include -I${MTCP_FLD}/src/include
@@ -68,11 +65,14 @@ UTIL_INC = -I${UTIL_FLD}/include
 UTIL_OBJ = ${UTIL_FLD}/http_parsing.o ${UTIL_FLD}/tdate_parse.o ${UTIL_FLD}/netlib.o
 
 # util library and header
-DPDK_MACHINE_LINKER_FLAGS=${RTE_SDK}/${RTE_TARGET}/lib/ldflags.txt
-DPDK_MACHINE_LDFLAGS=$(shell cat ${DPDK_MACHINE_LINKER_FLAGS})
-DPDK_INC = ${RTE_SDK}/${RTE_TARGET}/include
-FINAL_CFLAGS += ${UTIL_INC} ${MTCP_INC} -I${UTIL_FLD}/include -I/home/yihan/io_engine/include -I${DPDK_INC} 
-FINAL_LIBS += ${MTCP_LIB} -lpthread -lrt -march=native -lnuma -lmtcp -lpthread -lrt -ldl -lgmp -L${RTE_SDK}/${RTE_TARGET}/lib ${DPDK_MACHINE_LDFLAGS}
+INC = -I./include/ ${UTIL_INC} ${MTCP_INC} -I${UTIL_FLD}/include -I/home/yihan/mtcp/io_engine/include
+LIBS = -g -O3 -pthread -lrt -march=native ${MTCP_FLD}/lib/libmtcp.a -lnuma -lmtcp -lpthread -lrt -ldl -lgmp ${MTCP_LIB} -lpthread 
+
+# DPDK
+LIBDPDK_CFLAGS := $(shell pkg-config --cflags libdpdk)
+LIBDPDK_LDFLAGS := $(shell pkg-config --libs libdpdk)
+CFLAGS += $(LIBDPDK_CFLAGS)
+LIBS += $(LIBDPDK_LDFLAGS)
 
 ifeq ($(uname_S),SunOS)
 	# SunOS
