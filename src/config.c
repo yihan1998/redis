@@ -542,7 +542,7 @@ void loadServerConfigFromString(char *config) {
                 if (err) goto loaderr;
             }
         } else {
-            err = "Bad directive or wrong number of arguments"; goto loaderr;
+            // err = "Bad directive or wrong number of arguments"; goto loaderr;
         }
         sdsfreesplitres(argv,argc);
     }
