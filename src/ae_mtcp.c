@@ -58,7 +58,7 @@ static int aeApiAddEvent(aeEventLoop *eventLoop, int fd, int mask) {
     if (mask & AE_WRITABLE) ee.events |= MTCP_EPOLLOUT;
     ee.data.u64 = 0; /* avoid valgrind warning */
     ee.data.sockid = fd;
-    printf(" [%s:%d] add socket %d to epoll fd %d\n", __func__, __LINE__, fd, state->epfd);
+    // printf(" [%s:%d] add socket %d to epoll fd %d\n", __func__, __LINE__, fd, state->epfd);
     if (mtcp_epoll_ctl(mctx, state->epfd,op,fd,&ee) == -1) return -1;
     return 0;
 }
