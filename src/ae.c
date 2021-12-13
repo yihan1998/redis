@@ -399,7 +399,7 @@ int aeProcessEvents(aeEventLoop *eventLoop, int flags)
             }
         }
     
-        printf(" [%s:%d] Start to wait event\n", __func__, __LINE__);
+        // printf(" [%s:%d] Start to wait event\n", __func__, __LINE__);
 
         numevents = aeApiPoll(eventLoop, tvp);
         for (j = 0; j < numevents; j++) {

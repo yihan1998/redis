@@ -1184,7 +1184,7 @@ void readQueryFromClient(aeEventLoop *el, int fd, void *privdata, int mask) {
     if (c->querybuf_peak < qblen) c->querybuf_peak = qblen;
     c->querybuf = sdsMakeRoomFor(c->querybuf, readlen);
     nread = mtcp_read(mctx, fd, c->querybuf+qblen, readlen);
-    printf(" [%s:%d] socket %d receive %d Bytes\n", __func__, __LINE__, fd, nread);
+    // printf(" [%s:%d] socket %d receive %d Bytes\n", __func__, __LINE__, fd, nread);
     if (nread == -1) {
         if (errno == EAGAIN) {
             nread = 0;

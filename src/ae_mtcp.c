@@ -89,7 +89,7 @@ static int aeApiPoll(aeEventLoop *eventLoop, struct timeval *tvp) {
     retval = mtcp_epoll_wait(mctx, state->epfd,state->events,eventLoop->setsize, -1);
     if (retval > 0) {
         int j;
-        printf(" [%s:%d] epoll wait event: %d\n", __func__, __LINE__, retval);
+        // printf(" [%s:%d] epoll wait event: %d\n", __func__, __LINE__, retval);
 
         numevents = retval;
         for (j = 0; j < numevents; j++) {
