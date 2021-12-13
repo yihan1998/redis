@@ -96,7 +96,7 @@ ifeq ($(MALLOC),jemalloc)
 	FINAL_LIBS+= ../deps/jemalloc/lib/libjemalloc.a -ldl
 endif
 
-CYGNUS_DIR = /home/yihan-18/nus-sys/cygnus
+CYGNUS_DIR = /home/yihan/cygnus
 CYGNUS_CFLAGS = -O3 -g -fno-stack-protector -fPIC
 CYGNUS_CFLAGS += -I/usr/include/ -I$(CYGNUS_DIR)/Cygnus/include/ -I$(CYGNUS_DIR)/mthread/include/
 CYGNUS_LIB = -L$(CYGNUS_DIR)/mthread -lmthread -L$(CYGNUS_DIR)/Cygnus -lcygnus
