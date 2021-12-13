@@ -104,7 +104,7 @@ CYGNUS_LIB = -L$(CYGNUS_DIR)/mthread -lmthread -L$(CYGNUS_DIR)/Cygnus -lcygnus -
 # DPDK
 LIBDPDK_CFLAGS := $(shell pkg-config --cflags libdpdk)
 LIBDPDK_LDFLAGS := $(shell pkg-config --libs libdpdk)
-FINAL_CFLAGS += $(LIBDPDK_CFLAGS)
+FINAL_CFLAGS += $(CYGNUS_CFLAGS) $(LIBDPDK_CFLAGS)
 FINAL_LDFLAGS += $(LIBDPDK_LDFLAGS)
 
 REDIS_CC=$(QUIET_CC)$(CC) $(FINAL_CFLAGS)
