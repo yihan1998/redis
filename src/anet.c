@@ -571,7 +571,7 @@ static int anetGenericAccept(char *err, int s, struct sockaddr *sa, socklen_t *l
             fd = -1;
             break;
         }
-        printf(" [%s:%d] socket %d accept connection via %d\n", __func__, __LINE__, s, fd);
+        // printf(" [%s:%d] socket %d accept connection via %d\n", __func__, __LINE__, s, fd);
         break;
     }
     return fd;
